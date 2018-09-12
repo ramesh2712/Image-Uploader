@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
         if (userManager.registerUser(user) != null) {
             return true;
         }
-
         return false;
     }
 
