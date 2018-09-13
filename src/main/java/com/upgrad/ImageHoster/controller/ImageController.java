@@ -138,7 +138,6 @@ public class ImageController {
     }
 
 
-    /*
     @RequestMapping(value = "/image/{id}/comments/create", method = RequestMethod.POST)
     public String submitComment(@PathVariable Integer id,
                                 @RequestParam("comment") String text,
@@ -158,10 +157,9 @@ public class ImageController {
             comment.setText(text);
             comment.setUser(currUser);
             commentService.createComment(comment);
-            return "images/image";
+            return "redirect:/images/" + id + "/" + image.getTitle();
         }
     }
-    */
 
     /**
      * This method deletes a specific image from the database
@@ -229,7 +227,7 @@ public class ImageController {
         image.setTags(imageTags);
         imageService.update(image);
 
-        return "/images/" + id + "/" + title;
+        return "redirect:/images/" + id + "/" + title;
     }
 
     /**
