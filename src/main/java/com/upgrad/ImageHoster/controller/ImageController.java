@@ -17,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 
 @Controller
@@ -105,20 +102,25 @@ public class ImageController {
             Image newImage = new Image(title, description, uploadedImageData, currUser, imageTags);
             imageService.save(newImage);
 
-            return "redirect:/images/" + newImage.getTitle();
+            // changes : pass "id" and "title" to fetch unique image if we have image with same title.
+            return "redirect:/images/" + newImage.getId() + "/" + newImage.getTitle();
         }
     }
 
     /**
      * This controller shows a specific image
+     * @param id the id of the image that we want to retrieve
      * @param title the title of the image that we want to retrieve
      * @param model used to pass data to the view for rendering
      *
      * @return view for the image that was requested
      */
-    @RequestMapping("/images/{title}")
-    public String showImage(@PathVariable String title, Model model) {
-        Image image = imageService.getByTitleWithJoin(title);
+    @RequestMapping("/images/{id}/{title}")
+    public String showImage(@PathVariable Integer id,
+                            @PathVariable String title,
+                            Model model) {
+
+        Image image = imageService.getByID(id);
         image.setNumView(image.getNumView() + 1);
         imageService.update(image);
 
@@ -132,15 +134,14 @@ public class ImageController {
     /**
      * This method deletes a specific image from the database
      *
-     * @param title title of the image that we want to delete
+     * @param id id of the image that we want to delete
      *
      * @return redirects the user to the homepage view
      */
-    @RequestMapping("/images/{title}/delete")
-    public String deleteImage(@PathVariable String title) {
-        Image image = imageService.getByTitle(title);
-        imageService.deleteByTitle(image);
-
+    @RequestMapping("/images/{id}/delete")
+    public String deleteImage(@PathVariable Integer id) {
+        Image image = imageService.getByID(id);
+        imageService.deleteById(image);
 
         return "redirect:/";
     }
@@ -149,14 +150,14 @@ public class ImageController {
      * This controller method displays an image edit form, so the user
      * can update the image's description and uploaded file
      *
-     * @param title title of the image that we want to edit
+     * @param id id of the image that we want to edit
      * @param model used to pass data to the view for rendering
      *
      * @return the image edit form view
      */
-    @RequestMapping("/images/{title}/edit")
-    public String editImage(@PathVariable String title, Model model) {
-        Image image = imageService.getByTitleWithJoin(title);
+    @RequestMapping("/images/{id}/edit")
+    public String editImage(@PathVariable Integer id, Model model) {
+        Image image = imageService.getByID(id);
         String tags = convertTagsToString(image.getTags());
 
         model.addAttribute("image", image);
@@ -167,7 +168,7 @@ public class ImageController {
 
     /**
      * This controller method updates the image that we wanted to edit
-     *
+     * @param id id of the image that we want to edit
      * @param title title of the image that we want to edit
      * @param description the updated description for the image
      * @param file the updated file for the image
@@ -177,21 +178,26 @@ public class ImageController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/editImage", method = RequestMethod.POST)
-    public String edit(@RequestParam("title") String title,
+    @RequestMapping(value = "/editImage/{id}", method = RequestMethod.POST)
+    public String edit(@PathVariable Integer id,
+                       @RequestParam("title") String title,
                        @RequestParam("description") String description,
                        @RequestParam("file") MultipartFile file,
                        @RequestParam("tags") String tags) throws IOException {
-        Image image = imageService.getByTitle(title);
+        Image image = imageService.getByID(id);
         List<Tag> imageTags = findOrCreateTags(tags);
-        String updatedImageData = convertUploadedFileToBase64(file);
 
+        // Currently if try to edit with no image , it shows empty image after edit
+        // Validate whether image Data empty or not
+        String updatedImageData = convertUploadedFileToBase64(file);
+        if (!updatedImageData.isEmpty()) {
+            image.setImageFile(updatedImageData);
+        }
         image.setDescription(description);
-        image.setImageFile(updatedImageData);
         image.setTags(imageTags);
         imageService.update(image);
 
-        return "redirect:/images/" + title;
+        return "redirect:/images/" + id + "/" + title;
     }
 
     /**

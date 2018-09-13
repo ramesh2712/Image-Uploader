@@ -33,9 +33,23 @@ public class ImageServiceImpl implements ImageService {
         imageManager.deleteImage(image.getTitle());
     }
 
+    // Added new method to delete image by id;
+
+    @Override
+    public void deleteById(Image image) {
+        imageManager.deleteImage(image.getId());
+    }
+
     @Override
     public void save(Image image) { imageManager.saveImage(image); }
 
     @Override
     public void update(Image newImage) { imageManager.updateImage(newImage); }
+
+    // Added new method to fetch image by id ;
+
+    @Override
+    public Image getByID(int id) {
+        return imageManager.getImageById(id);
+    }
 }
