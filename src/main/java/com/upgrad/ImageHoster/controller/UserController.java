@@ -68,6 +68,16 @@ public class UserController {
         User registeredUser = userService.getByName(username);
         if (registeredUser == null) {
 
+            // Username and password needs to be to be 6 characters or longer
+            if (username.length() < 6 || password.length() < 6) {
+
+                HashMap<String,String> errors = new HashMap<String, String>();
+                errors.put("username","needs to be 6 characters or longer");
+                errors.put("password","needs to be 6 characters or longer");
+                model.addAttribute("errors", errors);
+                return "users/signup";
+            }
+
             // We'll first assign a default photo to the user
             ProfilePhoto photo = new ProfilePhoto();
             profilePhotoService.save(photo);
