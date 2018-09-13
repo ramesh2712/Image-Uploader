@@ -1,8 +1,10 @@
 package com.upgrad.ImageHoster.controller;
 
+import com.upgrad.ImageHoster.model.Comment;
 import com.upgrad.ImageHoster.model.Image;
 import com.upgrad.ImageHoster.model.Tag;
 import com.upgrad.ImageHoster.model.User;
+import com.upgrad.ImageHoster.service.CommentService;
 import com.upgrad.ImageHoster.service.ImageService;
 import com.upgrad.ImageHoster.service.TagService;
 import com.upgrad.ImageHoster.service.UserService;
@@ -30,6 +32,9 @@ public class ImageController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommentService commentService;
 
     /**
      * This controller method returns all the images that have been
@@ -127,9 +132,36 @@ public class ImageController {
         model.addAttribute("user", image.getUser());
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments",image.getCommentList());
 
         return "images/image";
     }
+
+
+    /*
+    @RequestMapping(value = "/image/{id}/comments/create", method = RequestMethod.POST)
+    public String submitComment(@PathVariable Integer id,
+                                @RequestParam("comment") String text,
+                                HttpSession session) throws IOException {
+
+        User currUser = (User) session.getAttribute("currUser");
+
+        // if the user is not logged in, redirect to the home page
+        if(currUser == null ){
+            return "redirect:/";
+        }
+        else {
+
+            Image image = imageService.getByID(id);
+            Comment comment = new Comment();
+            comment.setImage(image);
+            comment.setText(text);
+            comment.setUser(currUser);
+            commentService.createComment(comment);
+            return "images/image";
+        }
+    }
+    */
 
     /**
      * This method deletes a specific image from the database
@@ -197,7 +229,7 @@ public class ImageController {
         image.setTags(imageTags);
         imageService.update(image);
 
-        return "redirect:/images/" + id + "/" + title;
+        return "/images/" + id + "/" + title;
     }
 
     /**
