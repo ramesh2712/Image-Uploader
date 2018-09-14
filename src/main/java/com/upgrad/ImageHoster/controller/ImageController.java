@@ -33,8 +33,6 @@ public class ImageController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private CommentService commentService;
 
     /**
      * This controller method returns all the images that have been
@@ -137,29 +135,6 @@ public class ImageController {
         return "images/image";
     }
 
-
-    @RequestMapping(value = "/image/{id}/comments/create", method = RequestMethod.POST)
-    public String submitComment(@PathVariable Integer id,
-                                @RequestParam("comment") String text,
-                                HttpSession session) throws IOException {
-
-        User currUser = (User) session.getAttribute("currUser");
-
-        // if the user is not logged in, redirect to the home page
-        if(currUser == null ){
-            return "redirect:/";
-        }
-        else {
-
-            Image image = imageService.getByID(id);
-            Comment comment = new Comment();
-            comment.setImage(image);
-            comment.setText(text);
-            comment.setUser(currUser);
-            commentService.createComment(comment);
-            return "redirect:/images/" + id + "/" + image.getTitle();
-        }
-    }
 
     /**
      * This method deletes a specific image from the database
