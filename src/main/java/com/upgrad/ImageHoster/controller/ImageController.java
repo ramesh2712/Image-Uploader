@@ -1,8 +1,10 @@
 package com.upgrad.ImageHoster.controller;
 
+import com.upgrad.ImageHoster.model.Comment;
 import com.upgrad.ImageHoster.model.Image;
 import com.upgrad.ImageHoster.model.Tag;
 import com.upgrad.ImageHoster.model.User;
+import com.upgrad.ImageHoster.service.CommentService;
 import com.upgrad.ImageHoster.service.ImageService;
 import com.upgrad.ImageHoster.service.TagService;
 import com.upgrad.ImageHoster.service.UserService;
@@ -30,6 +32,7 @@ public class ImageController {
 
     @Autowired
     private UserService userService;
+
 
     /**
      * This controller method returns all the images that have been
@@ -127,9 +130,11 @@ public class ImageController {
         model.addAttribute("user", image.getUser());
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments",image.getCommentList());
 
         return "images/image";
     }
+
 
     /**
      * This method deletes a specific image from the database
