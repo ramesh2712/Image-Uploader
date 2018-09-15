@@ -8,7 +8,7 @@
 
 <body class="sans-serif">
 <main class="pa4 black-80">
-    <form method="POST" enctype="multipart/form-data" action="/editImage" class="measure center">
+    <form method="POST" enctype="multipart/form-data" th:action="'/editImage/' + ${image.id}" class="measure center">
         <fieldset id="sign_up" class="ba b--transparent ph0 mh0">
             <legend class="f2 fw6 ph0 mh0">Edit image</legend>
             <div class="mt3">

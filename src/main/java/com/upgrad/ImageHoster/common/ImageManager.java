@@ -7,6 +7,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import java.util.List;
 
 @SuppressWarnings("unchecked")
@@ -45,6 +47,34 @@ public class ImageManager extends SessionManager {
             System.out.println("unable to retrieve an image from database by its title");
         }
 
+        return null;
+    }
+
+    /**
+     * This method retrieves an image by its id
+     *
+     * @param id the id of the image that we are looking for
+     *
+     * @return an Image object that we retrieved by its id
+     */
+    public Image getImageById(final int id) {
+        Session session = openSession();
+
+        try {
+
+            Image image = (Image)session.createCriteria(Image.class)
+                    .add(Restrictions.eq("id", id))
+                    .uniqueResult(); // retrieves only 1 image
+            Hibernate.initialize(image.getTags()); // doing a join on tags table
+            Hibernate.initialize(image.getUser()); // doing a join on user table
+            Hibernate.initialize(image.getUser().getProfilePhoto()); // doing a join on profile photo table
+            Hibernate.initialize(image.getCommentList()); // doing a join on comment table
+            commitSession(session);
+            return image;
+        }
+        catch(HibernateException e) {
+            System.out.println("unable to retrieve an image from database by its title");
+        }
         return null;
     }
 
@@ -128,6 +158,21 @@ public class ImageManager extends SessionManager {
         Session session = openSession();
         Query query = session.createQuery("Delete from " + Image.class.getName() + " where title=:imageTitle");
         query.setParameter("imageTitle", title);
+        query.executeUpdate();
+        commitSession(session);
+    }
+
+    /**
+     * This method deletes an image data from the database
+     *
+     * @param id the id of the image that we want to delete
+     */
+
+    public void deleteImage(final Integer id) {
+
+        Session session = openSession();
+        Query query = session.createQuery("Delete from " + Image.class.getName() + " where id=:imageID");
+        query.setParameter("imageID", id);
         query.executeUpdate();
         commitSession(session);
     }
