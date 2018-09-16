@@ -6,8 +6,8 @@
     <session-factory>
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="hibernate.connection.username">postgres</property>
-        <property name="hibernate.connection.password">Swaminarayan1</property>
-        <property name="connection.url">jdbc:postgresql://localhost:5433/assignment</property>
+        <property name="hibernate.connection.password">123</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/assignment</property>
         <property name="hibernate.connection.pool_size">1</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgresPlusDialect</property>
         <property name="hibernate.current_session_context_class">managed</property>
