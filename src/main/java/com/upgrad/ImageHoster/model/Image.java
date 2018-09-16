@@ -1,6 +1,9 @@
 package com.upgrad.ImageHoster.model;
 
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ public class Image implements Serializable{
         inverseJoinColumns = { @JoinColumn(name = "tag_id")})
     private List<Tag> tags = new ArrayList<Tag>();
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToMany(fetch = FetchType.LAZY ,mappedBy = "image")
     private List<Comment> commentList = new ArrayList<Comment>();
 
